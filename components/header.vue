@@ -1,80 +1,178 @@
+<!--
+ * @Description: 
+ * @Author: Xiaoyifei
+ * @Date: 2019-09-02 09:08:17
+ * @LastEditTime: 2019-09-04 20:26:00
+ * @LastEditors: Xiaoyifei
+ -->
 <template>
-  <div class="container">
-    <!-- justify-content:space-between; 左右贴边对齐 -->
-    <!-- 文档： https://element.eleme.cn/#/zh-CN/component/layout#dui-qi-fang-shi -->
-    <el-row type="flex" class="main" justify="space-between">
-      <!-- logo -->
-      <div class="logo">
-        <img src="http://157.122.54.189:9093/images/logo.jpg" alt />
-      </div>
+    <header class="header">
+        <el-row type="flex" justify="space-between" class="main">
 
-      <el-row type="flex" class="navs">
-        <!-- nuxt-link的作用和使用方式和router-link -->
-        <nuxt-link to="/">首页</nuxt-link>
-        <nuxt-link to="/post">旅游攻略</nuxt-link>
-        <nuxt-link to="/hotel">酒店</nuxt-link>
-        <nuxt-link to="/air">国内机票</nuxt-link>
-      </el-row>
 
-      <!-- 登录跳转 -->
-      <div>
-        <nuxt-link to="/user/login">登录 / 注册</nuxt-link>
-      </div>
-    </el-row>
-  </div>
+            <!-- logo -->
+            <div class="logo">
+                <nuxt-link to="/">
+                    <img src="http://157.122.54.189:9093/images/logo.jpg" alt="">
+                </nuxt-link>
+            </div>
+
+
+            <!-- 菜单栏 -->
+            <el-row type="flex" class="navs">
+                <nuxt-link to="/">首页</nuxt-link>
+                <nuxt-link to="/post">旅游攻略</nuxt-link>
+                <nuxt-link to="/hotel">酒店</nuxt-link>
+                <nuxt-link to="/air">国内机票</nuxt-link>  
+            </el-row>
+
+
+            <!-- 登录/用户信息 -->
+            <el-row type="flex" align="middle">
+
+
+                <!-- 如果用户存在则展示用户信息，用户数据来自store -->
+                <el-dropdown v-if="!!$store.state.user.userInfo.token">
+                    <el-row type="flex" align="middle" class="el-dropdown-link">
+                        <nuxt-link to="#">
+                            <img :src="`${$axios.defaults.baseURL}${$store.state.user.userInfo.user.defaultAvatar}`"/>
+                            {{$store.state.user.userInfo.user.nickname}}
+                        </nuxt-link>
+                        <i class="el-icon-caret-bottom el-icon--right"></i>
+                    </el-row>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>
+                           <nuxt-link to="#">个人中心</nuxt-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <div @click="handleLogout">退出</div> 
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+
+
+                <!-- 不存在用户信息展示登录注册链接 -->
+                <nuxt-link to="/user/login" class="account-link" v-else>
+                    登录 / 注册 
+                </nuxt-link>
+            </el-row>
+        </el-row>
+    </header>
 </template>
-
 <script>
-export default {};
+export default {
+    methods: {
+        // 用户退出
+        handleLogout(){
+            this.$store.commit('user/clearUserInfo')
+            this.$router.push('/user/login')
+        },
+    }
+}
 </script>
-
 <style scoped lang="less">
-.container {
-  width: 100%;
-  height: 60px;
-  line-height: 60px;
-  border-bottom: 1px #ddd solid;
-  box-shadow: 0 2px 2px #ddd;
-}
+    .header{
+        height: 60px;
+        line-height:60px;
+        background:#fff;
+        border-bottom: 1px #ddd solid;
+        box-shadow:0 3px 0 #f5f5f5;
+        box-sizing: border-box;
 
-.main {
-  width: 1000px;
-  margin: 0 auto;
-}
 
-.navs {
-  flex: 1;
-  margin-left: 10px;
+        .main{
+            width:1000px;
+            margin:0 auto;
+        }
 
-  a {
-    display: block;
-    height: 60px;
-    padding: 0 20px;
-    box-sizing: border-box;
 
-    &:hover {
-      color: #409eff;
-      border-bottom: 5px #409eff solid;
-    }
-  }
+        .logo{
+            width:156px;
+            padding-top:8px;
 
-  // 该class是nuxt会去自动匹配nuxt-link的to的值，如果url和to的值相等会自动加上下面的class
-  .nuxt-link-exact-active {
-    background: #409eff;
-    color: #fff;
 
-    &:hover {
-      color: #fff;
-    }
-  }
-}
+            img{
+                display: block;
+                width:100%;
+            }
+        }
 
-.logo {
-  padding-top: 9px;
-  img {
-    width: 156px;
-    height: 42px;
-    display: block;
-  }
-}
+
+        .navs{
+            margin: 0 20px;
+            flex:1;
+
+
+            a{
+                display:block;
+                padding:0 20px;
+                height:60px;
+                box-sizing: border-box;
+                text-decoration: none;
+                color: #000;
+                &:hover,&:focus, &:active {
+                    border-bottom:5px #409eff solid;
+                    color:#409eff;
+                }
+            }
+
+
+            /deep/ .nuxt-link-exact-active{
+                background:#409eff;
+                color:#fff!important;
+            }
+        }
+
+
+        .message{
+            height:36px;
+            line-height:1;
+            cursor:pointer;
+            .el-icon-bell{
+                margin-right:2px;
+                font-size:18px;      
+            }
+        }
+
+
+        .el-dropdown-link{
+           margin-left:20px;
+
+
+           &:hover{
+               img{
+                    border-color: #409eff;
+               }
+            }
+
+
+           a{
+               display:block;
+           }
+
+
+            img{
+
+
+                width:32px;
+                height:32px;
+                vertical-align: middle;
+                border:2px #fff solid;
+                border-radius:50px;
+            }
+        }
+
+
+        .account-link{
+            font-size: 14px;
+            margin-left:10px;
+            color:#666;
+
+
+            &:hover{
+                color:#409eff;
+                text-decoration: underline;
+            }
+        }
+    } 
 </style>
